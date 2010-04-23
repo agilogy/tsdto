@@ -1,0 +1,18 @@
+Typesafe Data Transfer Objects
+------------------------------
+
+In a Service Oriented Architecture we need to create lots of Data Transfer Objects (or Message Objects), 
+each of them with their attribute, getter, setter, equals, hashCode, etc. We could avoid this if we used
+a Map, but then we would loose readability and "autocompleteability" and type safety.
+
+The goal of this framework is to provide a way to write DTOs that:
+* Have as little code as possible
+* Have full autocomplete capability and type safety
+* Can tell the difference between a property set to null and a property not set (hasWhateverTheProperty methods)
+* Keeps the JavaBean convention (so, we call getName instead of get("name") )
+* Has as little external dependencies as possible (ideally 0)
+
+As a secondary goal, it would be nice to have some default JSON conversion, even XML although they can be easily achieved
+with traditional tools as the DTOs will be following the JavaBean convention.
+
+We have to keep performance in mind as everything is being generated dynamically.
