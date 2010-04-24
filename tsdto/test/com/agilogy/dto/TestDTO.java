@@ -1,4 +1,4 @@
-package test.com.agilogy.dto;
+package com.agilogy.dto;
 
 import static org.junit.Assert.*;
 
@@ -6,11 +6,12 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import test.com.agilogy.dto.model.DepartmentMessage;
-import test.com.agilogy.dto.model.Person;
-import test.com.agilogy.dto.model.PersonMessage;
 
 import com.agilogy.dto.DTOFactory;
+import com.agilogy.dto.model.Department;
+import com.agilogy.dto.model.DepartmentMessage;
+import com.agilogy.dto.model.Person;
+import com.agilogy.dto.model.PersonMessage;
 
 public class TestDTO {
 
@@ -72,5 +73,37 @@ public class TestDTO {
 		PersonMessage pm = DTOFactory.createFromObject(PersonMessage.class, p);
 		assertEquals(p.getName(), pm.getName());
 		assertFalse(pm.hasBirthDate());
+	}
+	
+	interface WithoutMarker {
+		void getName();
+		void setName();
+	}
+	
+	interface WithMarker extends WithoutMarker, DTO {
+		
+	}
+	
+	@Test
+	public void testCheckMarkerInterface() {
+		try {
+			WithoutMarker wm = DTOFactory.createEmpty(WithoutMarker.class);
+			fail ("Should have failed but returned this: " + wm);
+		} catch (IllegalArgumentException e) {
+			//OK
+		}
+		WithMarker wm = DTOFactory.createEmpty(WithMarker.class);
+	}
+	//@Test
+	public void testAssociations() {
+		String name ="John Doe";
+		String phoneNumber = "555123456";
+		Person p = new Person(name, phoneNumber);
+		String deptName = "Sales";
+		Department d = new Department(deptName, p);
+		DepartmentMessage dm = DTOFactory.createFromObject(DepartmentMessage.class, d);
+		assertEquals(dm.getName(), d.getName());
+		assertEquals(dm.getDirector().getName(), d.getDirector().getName());
+		assertFalse(dm.getDirector().hasBirthDate());
 	}
 }

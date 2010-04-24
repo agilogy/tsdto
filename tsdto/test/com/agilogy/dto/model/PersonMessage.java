@@ -1,8 +1,10 @@
-package test.com.agilogy.dto.model;
+package com.agilogy.dto.model;
 
 import java.util.Date;
 
-public interface PersonMessage {
+import com.agilogy.dto.DTO;
+
+public interface PersonMessage extends DTO {
 	public String getName();
 	public void setName(String name);
 	public boolean hasName();

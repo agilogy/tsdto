@@ -1,7 +1,9 @@
-package test.com.agilogy.dto.model;
+package com.agilogy.dto.model;
+
+import com.agilogy.dto.DTO;
 
 
-public interface DepartmentMessage {
+public interface DepartmentMessage extends DTO{
 
 	public String getName();
 	public void setName(String name);

@@ -30,11 +30,11 @@ public class DTOInvocationHandler implements java.lang.reflect.InvocationHandler
 		this.checkers = new HashMap<String, String>();
 		Method[] methods = type.getMethods();
 		for (Method method: methods) {
-			if (isGetter(method)) {
+			if (PropertyHelper.isGetter(method)) {
 				getters.put(method.getName(), getPropertyName(method));
-			} else if (isChecker(method)) {
+			} else if (PropertyHelper.isChecker(method)) {
 				checkers.put(method.getName(), getPropertyName(method));
-			} else if (isSetter(method)) {
+			} else if (PropertyHelper.isSetter(method)) {
 				setters.put(method.getName(), getPropertyName(method));
 				//If we have a source object, let's set the property value from the object
 				if (source != null) {
@@ -119,19 +119,5 @@ public class DTOInvocationHandler implements java.lang.reflect.InvocationHandler
 		return propName;
 	}
 
-	private boolean isChecker(Method method) {
-		return method.getName().startsWith("has")
-				&& method.getParameterTypes().length == 0
-				&& !method.getName().equals("hashCode");
-	}
 
-	private boolean isGetter(Method method) {
-		return method.getName().startsWith("get")
-				&& method.getParameterTypes().length == 0;
-	}
-
-	private boolean isSetter(Method method) {
-		return method.getName().startsWith("set")
-				&& method.getParameterTypes().length == 1;
-	}
 }

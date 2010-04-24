@@ -1,4 +1,4 @@
-package test.com.agilogy.dto.model;
+package com.agilogy.dto.model;
 
 public class Person {
 	String name;
