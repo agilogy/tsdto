@@ -156,7 +156,8 @@ public class TestDTO {
 		assertEquals(dm.getDirector().getName(), d.getDirector().getName());
 		assertFalse(dm.getDirector().hasBirthDate());
 	}
-
+/*
+//Right now, we don't need the marker interface, so we will try to get along without it
 	interface WithoutMarker {
 		void getName();
 
@@ -177,4 +178,5 @@ public class TestDTO {
 		}
 		WithMarker wm = DTOFactory.createEmpty(WithMarker.class);
 	}
+*/
 }

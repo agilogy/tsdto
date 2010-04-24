@@ -2,9 +2,7 @@ package com.agilogy.dto.model;
 
 import java.util.Date;
 
-import com.agilogy.dto.DTO;
-
-public interface AllTheTypesDTO extends DTO{
+public interface AllTheTypesDTO {
 	public String getAString();
 
 	public void setAString(String value);

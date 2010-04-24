@@ -106,17 +106,7 @@ public class DTOInvocationHandler implements
 		} else if (PropertyHelper.isChecker(method)) {
 			return checkProperty(PropertyHelper.getPropertyName(method));
 		} else if (isEquals(method)) {
-			if (!(args[0] instanceof Proxy)) {
-				return false;
-			}
-			InvocationHandler theOtherInvocationHandler = Proxy
-					.getInvocationHandler(args[0]);
-			if (!(theOtherInvocationHandler instanceof DTOInvocationHandler)) {
-				return false;
-			}
-			DTOInvocationHandler odiv = (DTOInvocationHandler) theOtherInvocationHandler;
-			return odiv.type.isAssignableFrom(this.type)
-					&& odiv.values.equals(this.values);
+			return isEqual(args[0]);
 		} else if (isHashCode(method)) {
 			return values.hashCode();
 		} else if (isToString(method)) {
@@ -124,6 +114,20 @@ public class DTOInvocationHandler implements
 		}
 		// Raise an exception ?
 		return null;
+	}
+
+	private boolean isEqual(Object other) {
+		if (!(other instanceof Proxy)) {
+			return false;
+		}
+		InvocationHandler theOtherInvocationHandler = Proxy
+				.getInvocationHandler(other);
+		if (!(theOtherInvocationHandler instanceof DTOInvocationHandler)) {
+			return false;
+		}
+		DTOInvocationHandler odiv = (DTOInvocationHandler) theOtherInvocationHandler;
+		return odiv.type.isAssignableFrom(this.type)
+				&& odiv.values.equals(this.values);
 	}
 
 	private boolean isHashCode(Method method) {

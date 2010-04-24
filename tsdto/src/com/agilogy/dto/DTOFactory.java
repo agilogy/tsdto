@@ -5,9 +5,6 @@ import java.lang.reflect.Proxy;
 public class DTOFactory {
 	@SuppressWarnings("unchecked")
 	public static <T> T createEmpty(Class<T> type) {
-		if (!DTO.class.isAssignableFrom(type)) {
-			throw new IllegalArgumentException("DTO interfaces must extend " + DTO.class.getCanonicalName());
-		}
 		Object result = Proxy.newProxyInstance(DTOFactory.class
 				.getClassLoader(), new Class<?>[] { type },
 				new DTOInvocationHandler(type));

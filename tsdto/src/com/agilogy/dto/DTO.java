@@ -1,8 +1,7 @@
 package com.agilogy.dto;
 /**
  * Marker interface for generated DTO classes.
- * @author jose
- *
+ * @deprecated No longer required
  */
 public interface DTO {
 

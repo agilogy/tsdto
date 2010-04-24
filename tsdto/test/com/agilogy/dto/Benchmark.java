@@ -77,6 +77,7 @@ public class Benchmark {
 		return end - start;
 	}
 
+	@SuppressWarnings("unused")
 	private static void benchMarkGetMethod() throws NoSuchMethodException {
 		Method[] ma = PersonMessage.class.getMethods();
 		Random r = new Random();
