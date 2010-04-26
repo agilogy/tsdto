@@ -2,17 +2,23 @@ Typesafe Data Transfer Objects
 ------------------------------
 
 In a Service Oriented Architecture we need to create lots of Data Transfer Objects (or Message Objects), 
-each of them with their attribute, getter, setter, equals, hashCode, etc. We could avoid this if we used
-a Map, but then we would loose readability and "autocompleteability" and type safety.
+as we don't want to expose our domain model objects to the outside world.
 
-The goal of this framework is to provide a way to write DTOs that:
-* Have as little code as possible
-* Have full autocomplete capability and type safety
-* Can tell the difference between a property set to null and a property not set (hasWhateverTheProperty methods)
-* Keeps the JavaBean convention (so, we call getName instead of get("name") )
-* Has as little external dependencies as possible (ideally 0)
+Each of these DTOs has their attributes, getter, setter, equals, hashCode, etc. The goal of this framework is
+to reduce the amount of coding associated to the usage of these objects while keeping compiler type safety and
+adhering as much as possible to the standard JavaBean conventions.
 
-As a secondary goal, it would be nice to have some default JSON conversion, even XML although they can be easily achieved
-with traditional tools as the DTOs will be following the JavaBean convention.
+The type-safety requirement rules out solutions like Maps or JSON objects. It is important to limit the set of
+available properties to what is really allowed and it is important, as well, to verify the type of each property.
 
-We have to keep performance in mind as everything is being generated dynamically.
+Sometimes it is useful to tell the difference between a property set to null and a property not set even though
+the original JavaBean conventions do not support that. We have extended the conventions to add the hasWhateverTheProperty 
+method convention (we call them checker methods). These methods must return a boolean indicating whether the property 
+has been set or not.
+
+Secondary goals:
+ * Keep the external dependencies as little as possible.
+ * Have some default JSON conversion, even XML although they can be easily achieved with traditional tools as the DTOs will be following the JavaBean convention.
+ * Keep reasonable performance
+ 
+For more information on how to use the framework, please refer to the tests.

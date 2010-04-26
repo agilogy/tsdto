@@ -1,3 +1,27 @@
+/**
+ * Copyright (c) 2010, Agilogy
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, 
+ * are permitted provided that the following conditions  are met:
+ *  * Redistributions of source code must retain the above copyright notice, 
+ *  	this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice, 
+ *  	this list of conditions and the following disclaimer in the documentation 
+ *  	and/or other materials provided with the distribution.
+ *  * Neither the name of Agilogy nor the names of its contributors may be used 
+ *  	to endorse or promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package com.agilogy.dto;
 
 import java.lang.reflect.InvocationHandler;
@@ -8,8 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DTOInvocationHandler implements
-		java.lang.reflect.InvocationHandler {
+public class DTOInvocationHandler implements java.lang.reflect.InvocationHandler {
 	final String NULL = "null";
 
 	Map<String, Object> values;
@@ -47,27 +70,21 @@ public class DTOInvocationHandler implements
 
 		for (String propertyName : setters.keySet()) {
 			try {
-				Method getter = source.getClass().getMethod(
-						PropertyHelper.getGetterNameForProperty(propertyName));
+				Method getter = source.getClass().getMethod(PropertyHelper.getGetterNameForProperty(propertyName));
 				Object value = getter.invoke(source);
-				Class<?> propertyType = getters.get(propertyName)
-						.getReturnType();
-				if (Collection.class.isAssignableFrom(propertyType)
-						&& value != null && value instanceof Collection<?>) {
+				Class<?> propertyType = getters.get(propertyName).getReturnType();
+				if (Collection.class.isAssignableFrom(propertyType) && value != null && value instanceof Collection<?>) {
 					Class<?> collectionClass = value.getClass();
-					Collection<Object> valueToSet = (Collection<Object>) collectionClass
-							.newInstance();
-					ParameterizedType paramGenericType = (ParameterizedType) setters
-							.get(propertyName).getGenericParameterTypes()[0];
-					Class<?> valueType = (Class<?>) paramGenericType
-							.getActualTypeArguments()[0];
+					Collection<Object> valueToSet = (Collection<Object>) collectionClass.newInstance();
+					ParameterizedType paramGenericType = (ParameterizedType) setters.get(propertyName)
+							.getGenericParameterTypes()[0];
+					Class<?> valueType = (Class<?>) paramGenericType.getActualTypeArguments()[0];
 					for (Object element : (Collection<?>) value) {
 						value = DTOFactory.createFromObject(valueType, element);
 						valueToSet.add(value);
 					}
 					setProperty(propertyName, valueToSet);
-				} else if (value == null
-						|| propertyType.isAssignableFrom(value.getClass())) {
+				} else if (value == null || propertyType.isAssignableFrom(value.getClass())) {
 					setProperty(propertyName, value);
 
 				} else {
@@ -81,14 +98,12 @@ public class DTOInvocationHandler implements
 					setProperty(propertyName, value);
 				}
 			} catch (SecurityException e) {
-				throw new RuntimeException(
-						"Error finding getter. Is it not public?", e);
+				throw new RuntimeException("Error finding getter. Is it not public?", e);
 			} catch (NoSuchMethodException e) {
 				// We can't initialize this property from the object, no problem
 			} catch (Exception e) {
-				throw new RuntimeException(
-						"Error invoking getter for property " + propertyName
-								+ " on object " + source, e);
+				throw new RuntimeException("Error invoking getter for property " + propertyName + " on object "
+						+ source, e);
 			}
 		}
 
@@ -114,8 +129,7 @@ public class DTOInvocationHandler implements
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
 		if (PropertyHelper.isSetter(method)) {
 			setProperty(PropertyHelper.getPropertyName(method), args[0]);
@@ -138,28 +152,23 @@ public class DTOInvocationHandler implements
 		if (!(other instanceof Proxy)) {
 			return false;
 		}
-		InvocationHandler theOtherInvocationHandler = Proxy
-				.getInvocationHandler(other);
+		InvocationHandler theOtherInvocationHandler = Proxy.getInvocationHandler(other);
 		if (!(theOtherInvocationHandler instanceof DTOInvocationHandler)) {
 			return false;
 		}
 		DTOInvocationHandler odiv = (DTOInvocationHandler) theOtherInvocationHandler;
-		return odiv.type.isAssignableFrom(this.type)
-				&& odiv.values.equals(this.values);
+		return odiv.type.isAssignableFrom(this.type) && odiv.values.equals(this.values);
 	}
 
 	private boolean isHashCode(Method method) {
-		return method.getName().equals("hashCode")
-				&& method.getParameterTypes().length == 0;
+		return method.getName().equals("hashCode") && method.getParameterTypes().length == 0;
 	}
 
 	private boolean isEquals(Method method) {
-		return method.getName().equals("equals")
-				&& method.getParameterTypes().length == 1;
+		return method.getName().equals("equals") && method.getParameterTypes().length == 1;
 	}
 
 	private boolean isToString(Method method) {
-		return method.getName().equals("toString")
-				&& method.getParameterTypes().length == 0;
+		return method.getName().equals("toString") && method.getParameterTypes().length == 0;
 	}
 }
