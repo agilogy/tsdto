@@ -1,12 +1,17 @@
 package com.agilogy.dto;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
-import com.agilogy.dto.DTOFactory;
 import com.agilogy.dto.model.AllTheTypesDTO;
 import com.agilogy.dto.model.Department;
 import com.agilogy.dto.model.DepartmentMessage;
@@ -29,7 +34,7 @@ public class TestDTO {
 		assertEquals("name", name, pm.getName());
 		assertEquals("birthDate", birthDate, pm.getBirthDate());
 	}
-	
+
 	/**
 	 * Test basic data types
 	 */
@@ -40,34 +45,33 @@ public class TestDTO {
 		Integer anInteger = 5;
 		Long aLong = 123l;
 		Boolean aBoolean = true;
-		
+
 		AllTheTypesDTO dto = DTOFactory.createEmpty(AllTheTypesDTO.class);
 		assertFalse(dto.hasAString());
 		dto.setAString(aString);
 		assertTrue(dto.hasAString());
 		assertEquals(aString, dto.getAString());
-		
-		
+
 		assertFalse(dto.hasADate());
 		dto.setADate(aDate);
 		assertTrue(dto.hasADate());
 		assertEquals(aDate, dto.getADate());
-		
+
 		assertFalse(dto.hasAnInteger());
 		dto.setAnInteger(anInteger);
 		assertTrue(dto.hasAnInteger());
 		assertEquals(anInteger, dto.getAnInteger());
-		
+
 		assertFalse(dto.hasALong());
 		dto.setALong(aLong);
 		assertTrue(dto.hasALong());
 		assertEquals(aLong, dto.getALong());
-		
+
 		assertFalse(dto.hasABoolean());
 		dto.setABoolean(aBoolean);
 		assertTrue(dto.hasABoolean());
 		assertEquals(aBoolean, dto.isABoolean());
-		
+
 	}
 
 	/**
@@ -156,27 +160,56 @@ public class TestDTO {
 		assertEquals(dm.getDirector().getName(), d.getDirector().getName());
 		assertFalse(dm.getDirector().hasBirthDate());
 	}
-/*
-//Right now, we don't need the marker interface, so we will try to get along without it
-	interface WithoutMarker {
-		void getName();
 
-		void setName();
-	}
-
-	interface WithMarker extends WithoutMarker, DTO {
-
-	}
-
+	/**
+	 * Test associations to N (Collections)
+	 */
 	@Test
-	public void testCheckMarkerInterface() {
-		try {
-			WithoutMarker wm = DTOFactory.createEmpty(WithoutMarker.class);
-			fail("Should have failed but returned this: " + wm);
-		} catch (IllegalArgumentException e) {
-			// OK
+	public void testAssociationsToN() {
+		String name = "John Director";
+		String phoneNumber = "555123456";
+		Person director = new Person(name, phoneNumber);
+		Set<Person> employees = new HashSet<Person>();
+		Person employee1 = new Person("John Employee 1", phoneNumber);
+		employees.add(employee1);
+		Person employee2 = new Person("Jane Employee 2", phoneNumber);
+		employees.add(employee2);
+		Department d = new Department("Sales", director);
+		d.setEmployees(employees);
+
+		DepartmentMessage dm = DTOFactory.createFromObject(
+				DepartmentMessage.class, d);
+		assertNotNull(dm.getEmployees());
+		assertEquals("There must be two employees", 2, dm.getEmployees().size());
+		boolean[] found = new boolean[] { false, false };
+		for (PersonMessage pm : dm.getEmployees()) {
+			if (!found[0] && pm.getName().equals(employee1.getName())) {
+				found[0] = true;
+			} else if (!found[1] && pm.getName().equals(employee2.getName())) {
+				found[1] = true;
+			} else {
+				fail("Unknwon or repeated employee was found" + pm);
+			}
 		}
-		WithMarker wm = DTOFactory.createEmpty(WithMarker.class);
+		if (!found[0] || !found[1]) {
+			fail("Some employee " + found + " was not found in "
+					+ dm.getEmployees());
+		}
 	}
-*/
+	/*
+	 * //Right now, we don't need the marker interface, so we will try to get
+	 * along without it interface WithoutMarker { void getName();
+	 * 
+	 * void setName(); }
+	 * 
+	 * interface WithMarker extends WithoutMarker, DTO {
+	 * 
+	 * }
+	 * 
+	 * @Test public void testCheckMarkerInterface() { try { WithoutMarker wm =
+	 * DTOFactory.createEmpty(WithoutMarker.class);
+	 * fail("Should have failed but returned this: " + wm); } catch
+	 * (IllegalArgumentException e) { // OK } WithMarker wm =
+	 * DTOFactory.createEmpty(WithMarker.class); }
+	 */
 }

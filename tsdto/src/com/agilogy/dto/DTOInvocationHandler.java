@@ -2,7 +2,9 @@ package com.agilogy.dto;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ public class DTOInvocationHandler implements
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	void seedFromObject(Object source) {
 		if (source == null) {
 			return;
@@ -49,9 +52,24 @@ public class DTOInvocationHandler implements
 				Object value = getter.invoke(source);
 				Class<?> propertyType = getters.get(propertyName)
 						.getReturnType();
-				if (value == null
+				if (Collection.class.isAssignableFrom(propertyType)
+						&& value != null && value instanceof Collection<?>) {
+					Class<?> collectionClass = value.getClass();
+					Collection<Object> valueToSet = (Collection<Object>) collectionClass
+							.newInstance();
+					ParameterizedType paramGenericType = (ParameterizedType) setters
+							.get(propertyName).getGenericParameterTypes()[0];
+					Class<?> valueType = (Class<?>) paramGenericType
+							.getActualTypeArguments()[0];
+					for (Object element : (Collection<?>) value) {
+						value = DTOFactory.createFromObject(valueType, element);
+						valueToSet.add(value);
+					}
+					setProperty(propertyName, valueToSet);
+				} else if (value == null
 						|| propertyType.isAssignableFrom(value.getClass())) {
 					setProperty(propertyName, value);
+
 				} else {
 					// Classes don't match: We will assume the following
 					// scenario:
@@ -139,7 +157,7 @@ public class DTOInvocationHandler implements
 		return method.getName().equals("equals")
 				&& method.getParameterTypes().length == 1;
 	}
-	
+
 	private boolean isToString(Method method) {
 		return method.getName().equals("toString")
 				&& method.getParameterTypes().length == 0;
