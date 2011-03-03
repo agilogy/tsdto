@@ -26,9 +26,10 @@ package com.agilogy.dto;
 
 /**
  * Marker interface for generated DTO classes.
- * 
- * @deprecated No longer required
  */
 public interface DTO {
 
+	public void set(String propertyName, Object value);
+	public <T> T get(String propertyName);
+	public boolean has(String propertyName);
 }

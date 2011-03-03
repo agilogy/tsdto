@@ -52,10 +52,27 @@ public abstract class PropertyHelper {
 		} else {
 			propName = method.getName().substring(3);
 		}
+		propName = propName.substring(0,1).toLowerCase() + propName.substring(1);
 		return propName;
 	}
 
 	public static String getGetterNameForProperty(String propertyName) {
 		return "get" + propertyName;
+	}
+
+	public static boolean isDtoChecker(Method method) {
+		return method.getName().equals("has") && method.getParameterTypes().length == 1
+			&& method.getParameterTypes()[0].equals(String.class);
+	}
+	
+	public static boolean isDtoGetter(Method method) {
+		return method.getName().equals("get") && method.getParameterTypes().length == 1
+			&& method.getParameterTypes()[0].equals(String.class);
+	}
+	
+	public static boolean isDtoSetter(Method method) {
+		return method.getName().equals("set") && method.getParameterTypes().length == 2
+			&& method.getParameterTypes()[0].equals(String.class)
+			&& method.getParameterTypes()[1].equals(Object.class);
 	}
 }

@@ -133,6 +133,7 @@ public class DTOInvocationHandler implements java.lang.reflect.InvocationHandler
 
 		if (PropertyHelper.isSetter(method)) {
 			setProperty(PropertyHelper.getPropertyName(method), args[0]);
+			return null;
 		} else if (PropertyHelper.isGetter(method)) {
 			return getProperty(PropertyHelper.getPropertyName(method));
 		} else if (PropertyHelper.isChecker(method)) {
@@ -143,9 +144,15 @@ public class DTOInvocationHandler implements java.lang.reflect.InvocationHandler
 			return values.hashCode();
 		} else if (isToString(method)) {
 			return values.toString();
+		} else if (PropertyHelper.isDtoChecker(method)) {
+			return checkProperty((String)args[0]);
+		} else if (PropertyHelper.isDtoGetter(method)) {
+			return getProperty((String)args[0]);
+		} else if (PropertyHelper.isDtoSetter(method)) {
+			setProperty((String)args[0], args[1]);
+			return null;
 		}
-		// Raise an exception ?
-		return null;
+		throw new UnsupportedOperationException("Operation " + method.getName() + " not supported ");
 	}
 
 	private boolean isEqual(Object other) {

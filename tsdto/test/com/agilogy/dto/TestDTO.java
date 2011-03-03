@@ -39,6 +39,7 @@ import org.junit.Test;
 import com.agilogy.dto.model.AllTheTypesDTO;
 import com.agilogy.dto.model.Department;
 import com.agilogy.dto.model.DepartmentMessage;
+import com.agilogy.dto.model.OnlyGettersModel;
 import com.agilogy.dto.model.Person;
 import com.agilogy.dto.model.PersonMessage;
 
@@ -217,20 +218,44 @@ public class TestDTO {
 			fail("Some employee " + found + " was not found in " + dm.getEmployees());
 		}
 	}
-	/*
-	 * //Right now, we don't need the marker interface, so we will try to get
-	 * along without it interface WithoutMarker { void getName();
-	 * 
-	 * void setName(); }
-	 * 
-	 * interface WithMarker extends WithoutMarker, DTO {
-	 * 
-	 * }
-	 * 
-	 * @Test public void testCheckMarkerInterface() { try { WithoutMarker wm =
-	 * DTOFactory.createEmpty(WithoutMarker.class);
-	 * fail("Should have failed but returned this: " + wm); } catch
-	 * (IllegalArgumentException e) { // OK } WithMarker wm =
-	 * DTOFactory.createEmpty(WithMarker.class); }
+	
+	/**
+	 * Test a model that has only getters
 	 */
+	@Test
+	public void testModelWithGetters() {
+		String aString = "Some random string";
+		Date aDate = new Date();
+		Integer anInteger = 5;
+		Long aLong = 123l;
+		Boolean aBoolean = true;
+
+		OnlyGettersModel model = DTOFactory.createEmpty(OnlyGettersModel.class);
+		DTO dto = (DTO) model;
+		assertFalse(dto.has("aString"));
+		dto.set("aString", aString);
+		assertTrue(dto.has("aString"));
+		assertEquals(aString, model.getAString());
+
+		assertFalse(dto.has("aDate"));
+		dto.set("aDate",aDate);
+		assertTrue(dto.has("aDate"));
+		assertEquals(aDate, model.getADate());
+
+		assertFalse(dto.has("anInteger"));
+		dto.set("anInteger",anInteger);
+		assertTrue(dto.has("anInteger"));
+		assertEquals(anInteger, model.getAnInteger());
+
+		assertFalse(dto.has("aLong"));
+		dto.set("aLong",aLong);
+		assertTrue(dto.has("aLong"));
+		assertEquals(aLong, model.getALong());
+
+		assertFalse(dto.has("aBoolean"));
+		dto.set("aBoolean",aBoolean);
+		assertTrue(dto.has("aBoolean"));
+		assertEquals(aBoolean, model.isABoolean());
+
+	}
 }
